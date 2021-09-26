@@ -23,15 +23,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import io.javabrains.springsecurityjwt.filters.JwtRequestFilter;
 import io.javabrains.springsecurityjwt.models.AuthenticationRequest;
 import io.javabrains.springsecurityjwt.models.AuthenticationResponse;
 import io.javabrains.springsecurityjwt.util.JwtUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SpringBootApplication
 public class SpringSecurityJwtApplication {
@@ -44,6 +46,8 @@ public class SpringSecurityJwtApplication {
 
 @RestController
 class HelloWorldController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldController.class);
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -79,7 +83,12 @@ class HelloWorldController {
 		final UserDetails userDetails = userDetailsService
 				.loadUserByUsername(authenticationRequest.getUsername());
 
-		System.err.println("userDetails:" + userDetails );
+		System.err.println("userDetails: " + userDetails );
+	    LOGGER.debug("userDetails: " + userDetails);
+        LOGGER.info("userDetails: " + userDetails);
+        LOGGER.warn("userDetails: " + userDetails);
+        LOGGER.error("userDetails: " + userDetails);
+
 		
 		final String jwt = jwtTokenUtil.generateToken(userDetails);
 
@@ -123,7 +132,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf().disable()
+		httpSecurity
+		.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
+		//.csrf().disable()
 				.authorizeRequests().antMatchers("/authenticate").permitAll()
 				////.antMatchers("/hello").hasAnyAuthority("USER", "CREATOR", "admin")
 						.anyRequest().authenticated().and().
