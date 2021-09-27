@@ -133,7 +133,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
-		.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
+		.csrf().csrfTokenRepository(new CookieCsrfTokenRepository() ).and()
 		//.csrf().disable()
 				.authorizeRequests().antMatchers("/authenticate").permitAll()
 				////.antMatchers("/hello").hasAnyAuthority("USER", "CREATOR", "admin")
