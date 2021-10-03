@@ -38,8 +38,11 @@ import org.slf4j.LoggerFactory;
 @SpringBootApplication
 public class SpringSecurityJwtApplication {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringSecurityJwtApplication.class);
+
 	public static void main(String[] args) {
 		SpringApplication.run(SpringSecurityJwtApplication.class, args);
+		System.err.println("logger being used is : " + LOGGER.getClass().getName());		
 	}
 
 }

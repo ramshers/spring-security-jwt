@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Properties>
+
+  <!-- These properties can be used across the config file -->
+  <!-- DATE : %d{HH:mm:ss.SSS} - This displays the date in format of Hours minutes seconds milliseconds -->
+  <!-- CLASS NAME : %C{1} displays the class name (for the class name "org.apache.xyz.SomeClass", 
+       the pattern %C{1} will output "SomeClass") -->
+  <!-- THREAD : %t displays the name of the thread that generated the logging 
+       event -->
+  <!-- LINE : %L displays the line number from where the logging request 
+       was issued -->
+  <!-- LOG EVENT : %-5p displays the priority of the logging event -->
+
+       <Property name="LOG_PATTERN"> %magenta{%d{yyyy-MM-dd}} %yellow{%d{HH:mm:ss.SSS}} %clr{%-5p} %clr{${PID:- }}{magenta} [%-7thread] %magenta{%logger{70}}||%blue{%C{0}.%M:%L}: %msg%n
+       </Property>
+ </Properties>
+
+ <Appenders>
+    <Console name="LogToConsole" target="SYSTEM_OUT">
+   <!-- <PatternLayout pattern="${LOG_PATTERN}" />  -->
+   <!--  <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}  - %msg%n"/> -->
+     <PatternLayout pattern="${LOG_PATTERN}" />
+ </Console>
+
+ <!-- Format of Rolling File Format -->
+ <!-- $${date:yyyy-MM-dd} : A folder will be created every day(with date) -->
+ <!-- app-%d{MM-dd-yyyy} : File name will be appended with 'app-(date format) -->
+ <!-- %i : Iteration number -->
+
+  <RollingFile name="LogToFile" fileName="logs/app.log"
+      filePattern="logs/$${date:yyyy-MM-dd}/app-%d{MM-dd-yyyy}-%i.log">
+    <PatternLayout pattern="${LOG_PATTERN}" />
+    <Policies>
+      <TimeBasedTriggeringPolicy />
+      <SizeBasedTriggeringPolicy size="5 MB" />
+    </Policies>
+  </RollingFile>
+
+  <!-- The Appenders that Log4j2 provides -->
+  <!-- Console : Logs to the console -->
+  <!-- File : Logs to a File at a specified location -->
+  <!-- Rolling File : Rotates the File based on size and time -->
+  <!-- AsyncAppender : Make appender asynchronous. Increase performance -->
+  <!-- SMTPAppender : Sends email -->
+  <!-- JDBCAppender : Writes to a database -->
+  <!-- And More -->
+
+  </Appenders>
+  <Loggers>
+    <Logger name="io.javabrains" level="DEBUG" additivity="false">
+      <AppenderRef ref="LogToFile" />
+      <AppenderRef ref="LogToConsole" />
+    </Logger>
+    <Logger name="org.springframework.boot" level="ERROR"
+      additivity="false">
+      <AppenderRef ref="LogToConsole" />
+    </Logger>
+    <Root level="ERROR">
+      <AppenderRef ref="LogToFile" />
+      <AppenderRef ref="LogToConsole" />
+    </Root>
+    
+    <Logger name="org.springframework.cache" level="all" additivity="false">
+        <appender-ref ref="LogToConsole" />
+    </Logger>
+
+     <Logger name="net.sf.ehcache" level="all" additivity="false">
+        <appender-ref ref="LogToConsole" />
+      </Logger>
+        
+  </Loggers>
+</Configuration>
